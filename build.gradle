@@ -16,6 +16,9 @@ repositories {
 dependencies {
     //netty
     implementation 'io.netty:netty-all:4.1.77.Final'
+    implementation("com.google.code.gson:gson:2.13.1")
+    //lombok
+    implementation 'org.projectlombok:lombok:1.18.24'
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }

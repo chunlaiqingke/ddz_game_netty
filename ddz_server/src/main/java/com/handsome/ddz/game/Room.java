@@ -1,6 +1,7 @@
 package com.handsome.ddz.game;
 
 import com.alibaba.fastjson.JSONObject;
+import com.corundumstudio.socketio.SocketIOClient;
 import com.handsome.ddz.config.GameConfig;
 import com.handsome.ddz.config.RoomConfig;
 import com.handsome.ddz.models.RoomStatus;
@@ -66,6 +67,28 @@ public class Room {
     public void joinPlayer(Player player) {
         player.setSeatIndex(getSeatIndex());
         playerList.add(player);
+    }
+
+    public JSONObject enterRoom(Player  player){
+        List<JSONObject> player_data = new ArrayList<>();
+        for(int i=0; i<playerList.size(); i++){
+            JSONObject data = new JSONObject();
+            data.put("accountid", playerList.get(i).getAccountId());
+            data.put("nick_name", playerList.get(i).getNickName());
+            data.put("avatarUrl", playerList.get(i).getAvatarUrl());
+            data.put("goldcount", playerList.get(i).getGold());
+            data.put("seatindex", playerList.get(i).getSeatIndex());
+            data.put("isready", playerList.get(i).isReady());
+            player_data.add(data);
+        }
+
+        JSONObject enterroom_para = new JSONObject();
+        enterroom_para.put("seatindex", player.getSeatIndex());
+        enterroom_para.put("roomid", roomId);
+        enterroom_para.put("playerdata", player_data);
+        enterroom_para.put("housemanageid", ownPlayer.getAccountId());
+
+        return enterroom_para;
     }
 
     public int getSeatIndex(){

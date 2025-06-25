@@ -7,6 +7,9 @@ import com.handsome.ddz.game.PlayerInfo;
 import com.handsome.ddz.game.Room;
 import com.handsome.ddz.network.SocketHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class EventHandler {
 
     public void handleEvent(SocketIOClient client, JSONObject req) {
@@ -44,7 +47,9 @@ public class EventHandler {
 
     private void handleCreateRoom(SocketIOClient client, JSONObject req) {
         JSONObject data = req.getJSONObject("data");
-        Room room = new Room(data, GameManager.getPlayer(client.getSessionId().toString()));
+        Player player = GameManager.getPlayer(client.getSessionId().toString());
+        Room room = new Room(data, player);
+        player.setRoom(room);
         GameManager.createRoom(room);
 
         JSONObject resData = new JSONObject();
@@ -54,11 +59,15 @@ public class EventHandler {
         SocketHelper._notify("createroom_resp", 0, resData, req.getInteger("callindex"), client);
     }
 
-    private void handleJoinRoom(SocketIOClient client, JSONObject data) {
+    private void handleJoinRoom(SocketIOClient client, JSONObject req) {
 
     }
 
-    private void handleEnterRoom(SocketIOClient client, JSONObject data) {
-
+    private void handleEnterRoom(SocketIOClient client, JSONObject req) {
+        JSONObject data = req.getJSONObject("data");
+        Player player = GameManager.getPlayer(client.getSessionId().toString());
+        Room room = player.getRoom();
+        JSONObject enterRoomParam = room.enterRoom(player);
+        SocketHelper._notify("createroom_resp", 0, enterRoomParam, req.getInteger("callindex"), client);
     }
 }

@@ -1,0 +1,99 @@
+package com.handsome.ddz.game;
+
+import com.alibaba.fastjson.JSONObject;
+import com.corundumstudio.socketio.SocketIOClient;
+import com.handsome.ddz.manager.GameManager;
+import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Data
+public class Player {
+    private String nickName;
+    private String accountId;
+    private String avatarUrl;
+    private Long gold;
+    private SocketIOClient socket;
+    private GameManager gameManager;
+    private Room room;
+    private int seatIndex;
+    private boolean isReady;
+    private List<Card> cards;
+
+    public Player(PlayerInfo info, SocketIOClient socket, int callIndex) {
+        this.nickName = info.getNickName();
+        this.accountId = info.getAccountId();
+        this.avatarUrl = info.getAvatarUrl();
+        this.gold = info.getGoldCount();
+        this.socket = socket;
+//        this.gameManager = gameManager;
+        this.room = null;
+        this.seatIndex = 0;
+        this.isReady = false;
+        this.cards = new ArrayList<>();
+    }
+
+    private void _notify(String type, int result, Object data, int callBackIndex) {
+        JSONObject payload = new JSONObject();
+        payload.put("type", type);
+        payload.put("result", result);
+        payload.put("data", data != null ? data : new JSONObject());
+        payload.put("callBackIndex", callBackIndex);
+
+        System.out.println("notify = " + payload.toJSONString());
+        socket.sendEvent("notify", payload);
+    }
+
+    public void sendPlayerJoinRoom(JSONObject data) {
+        System.out.println("player join room notify: " + data.toJSONString());
+        _notify("player_joinroom_notify", 0, data, 0);
+    }
+
+    public void sendPlayerReady(JSONObject data) {
+        _notify("player_ready_notify", 0, data, 0);
+    }
+
+    public void gameStart() {
+        _notify("gameStart_notify", 0, new JSONObject(), 0);
+    }
+
+    public void sendPlayerChangeManage(JSONObject data) {
+        System.out.println("sendPlayerChangeManage: account:" + data.getString("account"));
+        _notify("changehousemanage_notify", 0, data, 0);
+    }
+
+    public void sendCards(List<Card> cards) {
+        this.cards = cards;
+        _notify("pushcard_notify", 0, cards, 0);
+    }
+
+    public void sendCanRob(JSONObject data) {
+        System.out.println("SendCanRob: " + data.toJSONString());
+        _notify("canrob_notify", 0, data, 0);
+    }
+
+    public void sendRobState(JSONObject data) {
+        _notify("canrob_state_notify", 0, data, 0);
+    }
+
+    public void sendChangeMaster(JSONObject data) {
+        _notify("change_master_notify", 0, data, 0);
+    }
+
+    public void sendShowBottomCard(JSONObject data) {
+        _notify("change_showcard_notify", 0, data, 0);
+    }
+
+    public void sendCanChuCard(JSONObject data) {
+        _notify("can_chu_card_notify", 0, data, 0);
+    }
+
+    public void sendRoomState(JSONObject data) {
+        _notify("room_state_notify", 0, data, 0);
+    }
+
+    public void sendOtherChuCard(JSONObject data) {
+        _notify("other_chucard_notify", 0, data, 0);
+    }
+}

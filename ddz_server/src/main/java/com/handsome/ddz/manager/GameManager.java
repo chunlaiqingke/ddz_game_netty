@@ -5,7 +5,6 @@ import com.handsome.ddz.game.Room;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class GameManager {
 
@@ -38,5 +37,9 @@ public class GameManager {
 
     public static void createRoom(Room room) {
         hall.put(room.getRoomId(), room);
+    }
+
+    public static Room getRoom(long roomId) {
+        return hall.get(roomId);
     }
 }

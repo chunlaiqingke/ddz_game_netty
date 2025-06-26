@@ -60,7 +60,16 @@ public class EventHandler {
     }
 
     private void handleJoinRoom(SocketIOClient client, JSONObject req) {
-
+        JSONObject data = req.getJSONObject("data");
+        Player player = GameManager.getPlayer(client.getSessionId().toString());
+        Room room = GameManager.getRoom(data.getLongValue("roomid"));
+        room.joinPlayer(player);
+        JSONObject resData = new JSONObject();
+        resData.put("roomid", room.getRoomId());
+        resData.put("bottom", room.getBottom());
+        resData.put("rate", room.getRate());
+        resData.put("gold", room.getGold());
+        SocketHelper._notify("joinroom_resp", 0, resData, req.getInteger("callindex"), client);
     }
 
     private void handleEnterRoom(SocketIOClient client, JSONObject req) {

@@ -17,7 +17,7 @@ import java.util.List;
 @Data
 public class Room {
 
-    private Long roomId;
+    private String roomId;
 
     private List<Player> playerList = new ArrayList<>();
 
@@ -53,7 +53,7 @@ public class Room {
 
 
     public Room(JSONObject roomInfo, Player ownPlayer) {
-        this.roomId = IDMaker.randomId();
+        this.roomId = IDMaker.randomId(6);
         this.ownPlayer = ownPlayer;
         RoomConfig roomConfig = GameConfig.getRate(roomInfo.getInteger("rate"));
         this.bottom = roomConfig.getBottom();
@@ -66,6 +66,21 @@ public class Room {
 
     public void joinPlayer(Player player) {
         player.setSeatIndex(getSeatIndex());
+        player.setRoom(this);
+
+        JSONObject playerInfo = new JSONObject();
+        playerInfo.put("accountid", player.getAccountId());
+        playerInfo.put("nick_name", player.getNickName());
+        playerInfo.put("avatarUrl", player.getAvatarUrl());
+        playerInfo.put("goldcount", player.getGold());
+        playerInfo.put("seatindex", player.getSeatIndex());
+
+        //send all player
+        for (int i = 0; i < playerList.size(); i++) {
+            Player player1 = playerList.get(0);
+            player1.sendPlayerJoinRoom(playerInfo);
+        }
+
         playerList.add(player);
     }
 

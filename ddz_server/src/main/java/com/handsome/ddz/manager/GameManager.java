@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class GameManager {
 
-    static Map<Long, Room> hall = new HashMap<>();
+    static Map<String, Room> hall = new HashMap<>();
 
     static Map<String, Player> players = new HashMap<>();
 
@@ -39,7 +39,7 @@ public class GameManager {
         hall.put(room.getRoomId(), room);
     }
 
-    public static Room getRoom(long roomId) {
+    public static Room getRoom(String roomId) {
         return hall.get(roomId);
     }
 }

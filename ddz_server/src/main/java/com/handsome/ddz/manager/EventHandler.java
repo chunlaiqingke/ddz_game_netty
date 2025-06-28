@@ -49,7 +49,6 @@ public class EventHandler {
         JSONObject data = req.getJSONObject("data");
         Player player = GameManager.getPlayer(client.getSessionId().toString());
         Room room = new Room(data, player);
-        player.setRoom(room);
         GameManager.createRoom(room);
 
         JSONObject resData = new JSONObject();
@@ -62,7 +61,7 @@ public class EventHandler {
     private void handleJoinRoom(SocketIOClient client, JSONObject req) {
         JSONObject data = req.getJSONObject("data");
         Player player = GameManager.getPlayer(client.getSessionId().toString());
-        Room room = GameManager.getRoom(data.getLongValue("roomid"));
+        Room room = GameManager.getRoom(data.getString("roomid"));
         room.joinPlayer(player);
         JSONObject resData = new JSONObject();
         resData.put("roomid", room.getRoomId());

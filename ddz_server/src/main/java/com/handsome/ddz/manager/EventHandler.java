@@ -27,6 +27,12 @@ public class EventHandler {
             case "enterroom_req":
                 handleEnterRoom(client, req);
                 break;
+            case "player_ready_notify":
+                handlePlayerReady(client, req);
+                break;
+            case "player_start_notify":
+                handlePlayerStart(client, req);
+                break;
             default:
                 break;
         }
@@ -77,5 +83,18 @@ public class EventHandler {
         Room room = player.getRoom();
         JSONObject enterRoomParam = room.enterRoom(player);
         SocketHelper._notify("createroom_resp", 0, enterRoomParam, req.getInteger("callindex"), client);
+    }
+
+    private void handlePlayerReady(SocketIOClient client, JSONObject req) {
+        Player player = GameManager.getPlayer(client.getSessionId().toString());
+        player.setReady(true);
+        Room room = player.getRoom();
+        room.playerReady(player);
+    }
+
+    private void handlePlayerStart(SocketIOClient client, JSONObject req) {
+        Player player = GameManager.getPlayer(client.getSessionId().toString());
+        int err_code = player.getRoom().playerStart(player);
+        SocketHelper._notify("playerStart", err_code, null, req.getInteger("callindex"), client);
     }
 }

@@ -96,4 +96,13 @@ public class Player {
     public void sendOtherChuCard(JSONObject data) {
         _notify("other_chucard_notify", 0, data, 0);
     }
+
+    public void sendPlayerReady(String accountId) {
+        _notify("player_ready_notify", 0, accountId, 0);
+    }
+
+    public void sendCard(List<Card> cards){
+        this.cards = cards;
+        _notify("pushcard_notify", 0, cards, 0);
+    }
 }

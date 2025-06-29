@@ -10,6 +10,7 @@ import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 房间里应该包含：玩家列表，房间状态，房主，观战人
@@ -37,11 +38,11 @@ public class Room {
 
     private Player lostPlayer;
 
-    private Player robPlayer;
+    private List<Player> robPlayer = new ArrayList<>();
 
     private Player roomMaster;
 
-    private List<Card> masterCards = new ArrayList<>();
+    private List<Card> masterCards = new ArrayList<>();// 地主牌
 
     private List<Card> playingCards = new ArrayList<>();//存储出牌的用户(一轮)
 
@@ -121,5 +122,77 @@ public class Room {
         }
 
         return index;
+    }
+
+    public void playerReady(Player player) {
+        for (Player p : playerList) {
+            p.sendPlayerReady(player.getAccountId());
+        }
+    }
+
+    /**
+     *
+     * @param player
+     * @return error code
+     */
+    public int playerStart(Player player){
+        if(playerList.size() != 3){
+            return -2;
+        }
+
+        //判断是有都准备成功
+        for (Player p : playerList) {
+            if (!Objects.equals(p.getAccountId(), this.ownPlayer.getAccountId())) {
+                if (!p.isReady()) {
+                    return -3;
+                }
+            }
+        }
+
+        //下发游戏开始广播消息
+        //gameStart()
+        changeState(RoomStatus.ROOM_GAMESTART);
+
+        //开始游戏
+        return 0;
+    }
+
+    private void gameStart() {
+    }
+
+    private void changeState(RoomStatus state) {
+        if(this.state==state){
+            return;
+        }
+        this.state = state;
+        switch(state){
+            case ROOM_WAITREADY:
+                break;
+            case ROOM_GAMESTART:
+                gameStart();
+                //切换到发牌状态
+                changeState(RoomStatus.ROOM_PUSHCARD);
+                break;
+            case ROOM_PUSHCARD:
+                //这个函数把54张牌分成4份[玩家1，玩家2，玩家3,底牌]
+                this.masterCards = this.carder.splitThreeCards();
+                for(int i = 0; i < this.playerList.size(); i++){
+                    Player player = playerList.get(i);
+                    player.sendCard(this.masterCards);
+                }
+                //切换到抢地主状态
+                changeState(RoomStatus.ROOM_ROBSTATE);
+                break;
+            case ROOM_ROBSTATE:
+                this.robPlayer=new ArrayList<>();
+                break;
+            case ROOM_SHOWBOTTOMCARD:
+                System.out.println("show bottom card");
+                break;
+            case ROOM_PLAYING:
+                break;
+            default:
+                break;
+        }
     }
 }

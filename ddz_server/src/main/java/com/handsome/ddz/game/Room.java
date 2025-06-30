@@ -42,7 +42,7 @@ public class Room {
 
     private Player roomMaster;
 
-    private List<Card> masterCards = new ArrayList<>();// 地主牌
+    private List<List<Card>> threeCards = new ArrayList<>();// 地主牌
 
     private List<Card> playingCards = new ArrayList<>();//存储出牌的用户(一轮)
 
@@ -175,24 +175,48 @@ public class Room {
                 break;
             case ROOM_PUSHCARD:
                 //这个函数把54张牌分成4份[玩家1，玩家2，玩家3,底牌]
-                this.masterCards = this.carder.splitThreeCards();
+                this.threeCards = this.carder.splitThreeCards();
                 for(int i = 0; i < this.playerList.size(); i++){
                     Player player = playerList.get(i);
-                    player.sendCard(this.masterCards);
+                    player.sendCard(this.threeCards.get(i));
                 }
                 //切换到抢地主状态
                 changeState(RoomStatus.ROOM_ROBSTATE);
                 break;
             case ROOM_ROBSTATE:
                 this.robPlayer=new ArrayList<>();
+                for(int i=this.playerList.size()-1; i>=0; i--){
+                    robPlayer.add(this.playerList.get(i));
+                }
+                turnRob();
                 break;
             case ROOM_SHOWBOTTOMCARD:
-                System.out.println("show bottom card");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                }
+                changeState(RoomStatus.ROOM_PLAYING);
+                //下个当前状态给客户端
+                for (Player player : this.playerList) {
+                    player.sendRoomState(RoomStatus.ROOM_PLAYING);
+                }
                 break;
             case ROOM_PLAYING:
+                resetChuCardPlayer();
+                //下发出牌消息
+                turnchuCard();
                 break;
             default:
                 break;
         }
+    }
+
+    private void turnRob() {
+    }
+
+    private void resetChuCardPlayer() {
+    }
+
+    private void turnchuCard() {
     }
 }

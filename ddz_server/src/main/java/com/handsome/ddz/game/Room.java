@@ -78,7 +78,7 @@ public class Room {
 
         //send all player
         for (int i = 0; i < playerList.size(); i++) {
-            Player player1 = playerList.get(0);
+            Player player1 = playerList.get(i);
             player1.sendPlayerJoinRoom(playerInfo);
         }
 

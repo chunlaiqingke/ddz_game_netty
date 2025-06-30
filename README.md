@@ -3,3 +3,4 @@
 ## 运行
 1. 安装java 
 2. 运行GameServer的main函数
+3. 客户端用cocos creator运行ddz_game的client项目

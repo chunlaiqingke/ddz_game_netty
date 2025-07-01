@@ -158,6 +158,9 @@ public class Room {
     }
 
     private void gameStart() {
+        for(Player player: this.playerList){
+            player.gameStart();
+        }
     }
 
     private void changeState(RoomStatus state) {
@@ -212,6 +215,30 @@ public class Room {
     }
 
     private void turnRob() {
+        if(this.robPlayer.isEmpty()){
+            //都抢过了，需要确定最终地主人选,直接退出
+            changeMaster(this.roomMaster.getAccountId());
+            //改变房间状态，显示底牌
+            changeState(RoomStatus.ROOM_SHOWBOTTOMCARD);
+            return;
+        }
+
+        //弹出已经抢过的用户
+        Player canPlayer = this.robPlayer.remove(0);
+        if(this.robPlayer.isEmpty() && this.roomMaster==null){
+            //没有抢地主，并且都抢过了,就设置为最后抢的玩家
+            this.roomMaster = canPlayer;
+            //return
+        }
+
+        for(int i=0;i<this.playerList.size();i++){
+            //通知下一个可以抢地主的玩家
+            this.playerList.get(i).sendCanRob(canPlayer.getAccountId());
+        }
+    }
+
+    private void changeMaster(String accountId) {
+
     }
 
     private void resetChuCardPlayer() {

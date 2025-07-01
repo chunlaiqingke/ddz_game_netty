@@ -68,8 +68,7 @@ public class Player {
         _notify("pushcard_notify", 0, cards, 0);
     }
 
-    public void sendCanRob(JSONObject data) {
-        System.out.println("SendCanRob: " + data.toJSONString());
+    public void sendCanRob(Object data) {
         _notify("canrob_notify", 0, data, 0);
     }
 

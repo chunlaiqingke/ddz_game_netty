@@ -10,7 +10,70 @@ import java.util.Map;
 @Data
 public class Carder {
 
-    private List<Card> cardList;
+    private Map<String,Integer> cardValue = new HashMap<>();;
+
+    private Map<String,Integer> cardShape = new HashMap<>();
+
+    private Map<String,Integer> kings = new HashMap<>();
+
+    private List<Card> cardList = new ArrayList<>();
+
+    public Carder() {
+        cardValue.put("A",12);
+        cardValue.put("2",13);
+        cardValue.put("3",1);
+        cardValue.put("4",2);
+        cardValue.put("5",3);
+        cardValue.put("6",4);
+        cardValue.put("7",5);
+        cardValue.put("8",6);
+        cardValue.put("9",7);
+        cardValue.put("10",8);
+        cardValue.put("J",9);
+        cardValue.put("Q",10);
+        cardValue.put("K",11);
+
+        // 黑桃：spade 红桃：heart 梅花：club 方片：diamond
+        cardShape.put("S",1);
+        cardShape.put("H",2);
+        cardShape.put("C",3);
+        cardShape.put("D",4);
+
+        kings.put("Kx",14);
+        kings.put("Kd",15);
+
+        initCardList();
+        shuffle();
+    }
+
+    public void initCardList() {
+        for (int value : cardValue.values()) {
+            for (int shape : cardShape.values()) {
+                Card card = new Card(value, shape, null);
+                card.setIndex(cardList.size());
+                cardList.add(card);
+            }
+        }
+
+        for (Integer value : kings.values()) {
+            Card card = new Card(null, null, value);
+            card.setIndex(cardList.size());
+            cardList.add(card);
+        }
+    }
+
+    private void shuffle() {
+        // 获取当前时间戳
+        long seed = System.currentTimeMillis();
+        // 使用随机数生成器进行洗牌
+        for (int i = cardList.size() - 1; i > 0; i--) {
+            // 生成随机索引
+            int j = (int) (seed % (i + 1));
+            // 交换当前索引和随机索引处的元素
+            Card temp = cardList.get(i);
+            cardList.set(i, cardList.get(j));
+        }
+    }
 
     public List<List<Card>> splitThreeCards() {
         // 参数校验：牌列表至少需要54张（17 * 3 + 3）

@@ -217,7 +217,7 @@ public class Room {
     private void turnRob() {
         if(this.robPlayer.isEmpty()){
             //都抢过了，需要确定最终地主人选,直接退出
-            changeMaster(this.roomMaster.getAccountId());
+            changeMaster();
             //改变房间状态，显示底牌
             changeState(RoomStatus.ROOM_SHOWBOTTOMCARD);
             return;
@@ -231,14 +231,22 @@ public class Room {
             //return
         }
 
-        for(int i=0;i<this.playerList.size();i++){
+        for (Player player : this.playerList) {
             //通知下一个可以抢地主的玩家
-            this.playerList.get(i).sendCanRob(canPlayer.getAccountId());
+            player.sendCanRob(canPlayer.getAccountId());
         }
     }
 
-    private void changeMaster(String accountId) {
+    private void changeMaster() {
+        for(Player player: this.playerList){
+            player.sendChangeMaster(this.roomMaster.getAccountId());
+        }
 
+        //显示底牌
+        for(Player player: this.playerList){
+            //把三张底牌的消息发送给房间里的用户
+            player.sendShowBottomCard(this.threeCards.get(3));
+        }
     }
 
     private void resetChuCardPlayer() {

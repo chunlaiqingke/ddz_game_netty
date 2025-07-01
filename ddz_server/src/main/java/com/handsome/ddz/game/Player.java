@@ -76,11 +76,11 @@ public class Player {
         _notify("canrob_state_notify", 0, data, 0);
     }
 
-    public void sendChangeMaster(JSONObject data) {
+    public void sendChangeMaster(Object data) {
         _notify("change_master_notify", 0, data, 0);
     }
 
-    public void sendShowBottomCard(JSONObject data) {
+    public void sendShowBottomCard(Object data) {
         _notify("change_showcard_notify", 0, data, 0);
     }
 

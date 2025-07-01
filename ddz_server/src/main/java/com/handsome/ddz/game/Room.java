@@ -3,6 +3,7 @@ package com.handsome.ddz.game;
 import com.alibaba.fastjson.JSONObject;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.handsome.ddz.config.GameConfig;
+import com.handsome.ddz.config.RobStatus;
 import com.handsome.ddz.config.RoomConfig;
 import com.handsome.ddz.models.RoomStatus;
 import com.handsome.ddz.util.IDMaker;
@@ -253,5 +254,37 @@ public class Room {
     }
 
     private void turnchuCard() {
+    }
+
+    public void playerRobMaster(Player player,Integer data) {
+        if(RobStatus.notRob==data){
+            //记录当前抢到地主的玩家id
+
+        }else if(RobStatus.rob==data){
+            this.roomMaster = player;
+        }else{
+            System.out.println("playerRobmaster state error:" + data);
+        }
+        if(player==null){
+            System.out.println("trun rob master end");
+            return;
+        }
+        //广播这个用户抢地主状态(抢了或者不抢)
+        Integer value = data;
+        for(Player p: this.playerList){
+            JSONObject d = new JSONObject();
+            d.put("accountid",player.getAccountId());
+            d.put("state",value);
+            p.sendRobState(d);
+        }
+        turnRob();
+    }
+
+    public void playerChuBuCard(Player player, Integer data) {
+
+    }
+
+    public void playerChuCard(Player player, Integer data) {
+
     }
 }

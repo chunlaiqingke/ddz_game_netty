@@ -33,9 +33,34 @@ public class EventHandler {
             case "player_start_notify":
                 handlePlayerStart(client, req);
                 break;
+            case "player_rob_notify":  //客户端发送抢地主消息
+                handlePlayerRob(client, req);
+                break;
+            case "chu_bu_card_req":   //客户端发送出牌消息
+                handleChuBuCard(client, req);
+                break;
+            case "chu_card_req":
+                handleChuCard(client, req);
+                break;
             default:
                 break;
         }
+    }
+
+    private void handleChuCard(SocketIOClient client, JSONObject req) {
+        Player player = GameManager.getPlayer(client.getSessionId().toString());
+        player.getRoom().playerChuCard(player, req.getInteger("data"));
+//        SocketHelper._notify("chu_card_res",0,result.data,callindex);
+    }
+
+    private void handleChuBuCard(SocketIOClient client, JSONObject req) {
+        Player player = GameManager.getPlayer(client.getSessionId().toString());
+        player.getRoom().playerChuBuCard(player, req.getInteger("data"));
+    }
+
+    private void handlePlayerRob(SocketIOClient client, JSONObject req) {
+        Player player = GameManager.getPlayer(client.getSessionId().toString());
+        player.getRoom().playerRobMaster(player, req.getInteger("data"));
     }
 
     private void handleWxLogin(SocketIOClient client, JSONObject req) {

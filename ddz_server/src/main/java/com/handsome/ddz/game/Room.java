@@ -45,13 +45,13 @@ public class Room {
 
     private List<List<Card>> threeCards = new ArrayList<>();// 地主牌
 
-    private List<Card> playingCards = new ArrayList<>();//存储出牌的用户(一轮)
+    private List<Player> playingCards = new ArrayList<>();//存储出牌的用户(一轮)
 
     private List<Card> curPushCardList = new ArrayList<>();//当前玩家出牌列表
 
     private List<Card> lastPushCardList = new ArrayList<>();//玩家上一次出的牌
 
-    private List<Card> lastPushCardAccountId = new ArrayList<>();//最后一个出牌的accountid
+    private String lastPushCardAccountId;//最后一个出牌的accountid
 
 
     public Room(JSONObject roomInfo, Player ownPlayer) {
@@ -251,9 +251,35 @@ public class Room {
     }
 
     private void resetChuCardPlayer() {
+        int master_index = 0; //地主在列表中的位置
+        for(int i=this.playerList.size()-1;i>=0;i--){
+            if(Objects.equals(this.playerList.get(0).getAccountId(), this.roomMaster.getAccountId())){
+                master_index = i;
+            }
+        }
+        //重新计算出牌的顺序
+        int index = master_index;
+        for(int i=this.playerList.size()-1;i>=0;i--){
+            int real_index = index % this.playerList.size();
+            this.playingCards.set(i, this.playerList.get(real_index));
+            index++;
+        }
+
+        //如果上一个出牌的人是自己，在一轮完毕后要从新设置为空
+        //如果上一个出牌的人不是自己，就不用处理
+        String next_push_player_account = this.playingCards.get(this.playingCards.size()-1).getAccountId();
+        if(next_push_player_account.equals(this.lastPushCardAccountId)){
+            this.lastPushCardList = new ArrayList<>();
+            this.lastPushCardAccountId = "0";
+        }
     }
 
     private void turnchuCard() {
+        Player cur_chu_card_player = this.playingCards.remove(this.playingCards.size());
+        for(Player player : this.playerList){
+            //通知下一个出牌的玩家
+            player.sendChuCard(cur_chu_card_player.getAccountId());
+        }
     }
 
     public void playerRobMaster(Player player,Integer data) {
@@ -281,7 +307,10 @@ public class Room {
     }
 
     public void playerChuBuCard(Player player, Integer data) {
-
+        if(this.playingCards.isEmpty()){
+            resetChuCardPlayer();
+        }
+        turnchuCard();
     }
 
     public void playerChuCard(Player player, Integer data) {

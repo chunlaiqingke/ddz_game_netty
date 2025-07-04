@@ -104,4 +104,8 @@ public class Player {
         this.cards = cards;
         _notify("pushcard_notify", 0, cards, 0);
     }
+
+    public void sendChuCard(Object data) {
+        _notify("can_chu_card_notify",0,data,0);
+    }
 }

@@ -34,7 +34,7 @@ public class EventHandler {
                 handlePlayerStart(client, req);
                 break;
             case "player_rob_notify":  //客户端发送抢地主消息
-                handlePlayerRob(client, req);
+                handlePlayerRobMaster(client, req);
                 break;
             case "chu_bu_card_req":   //客户端发送出牌消息
                 handleChuBuCard(client, req);
@@ -58,7 +58,7 @@ public class EventHandler {
         player.getRoom().playerChuBuCard(player, req.getInteger("data"));
     }
 
-    private void handlePlayerRob(SocketIOClient client, JSONObject req) {
+    private void handlePlayerRobMaster(SocketIOClient client, JSONObject req) {
         Player player = GameManager.getPlayer(client.getSessionId().toString());
         player.getRoom().playerRobMaster(player, req.getInteger("data"));
     }

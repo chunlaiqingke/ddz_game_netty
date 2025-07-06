@@ -313,7 +313,20 @@ public class Room {
         turnchuCard();
     }
 
-    public void playerChuCard(Player player, Integer data) {
+    public JSONObject playerChuCard(Player player, Integer data) {
+        //当前没有出牌,不用走下面判断
 
+        if(data==0){
+            JSONObject resp = new JSONObject();
+            JSONObject dataObj = new JSONObject();
+            dataObj.put("account",player.getAccountId());
+            dataObj.put("msg","choose card sucess");
+            resp.put("data",dataObj);
+            //让下一个玩家出牌,并发送消息
+            this.playerChuBuCard(null,null);
+            return resp;
+        }
+
+        return null;
     }
 }

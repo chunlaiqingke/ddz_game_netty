@@ -48,9 +48,10 @@ public class EventHandler {
     }
 
     private void handleChuCard(SocketIOClient client, JSONObject req) {
+        int callindex = req.getInteger("callindex");
         Player player = GameManager.getPlayer(client.getSessionId().toString());
-        player.getRoom().playerChuCard(player, req.getInteger("data"));
-//        SocketHelper._notify("chu_card_res",0,result.data,callindex);
+        JSONObject result = player.getRoom().playerChuCard(player, req.getInteger("data"));
+        SocketHelper._notify("chu_card_res",0,result.get("data"),callindex, client);
     }
 
     private void handleChuBuCard(SocketIOClient client, JSONObject req) {

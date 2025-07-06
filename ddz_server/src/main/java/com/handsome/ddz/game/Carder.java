@@ -104,4 +104,8 @@ public class Carder {
 
         return result;
     }
+
+    public Object isCanPushs(Integer data) {
+        return null;
+    }
 }

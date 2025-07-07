@@ -5,6 +5,7 @@ import com.corundumstudio.socketio.SocketIOClient;
 import com.handsome.ddz.config.GameConfig;
 import com.handsome.ddz.config.RobStatus;
 import com.handsome.ddz.config.RoomConfig;
+import com.handsome.ddz.manager.GameManager;
 import com.handsome.ddz.models.RoomStatus;
 import com.handsome.ddz.util.IDMaker;
 import lombok.Data;
@@ -68,7 +69,7 @@ public class Room {
 
     public void joinPlayer(Player player) {
         player.setSeatIndex(getSeatIndex());
-        player.setRoom(this);
+        GameManager.joinRoom(player, this);
 
         JSONObject playerInfo = new JSONObject();
         playerInfo.put("accountid", player.getAccountId());

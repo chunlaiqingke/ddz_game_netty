@@ -50,18 +50,21 @@ public class EventHandler {
     private void handleChuCard(SocketIOClient client, JSONObject req) {
         int callindex = req.getInteger("callindex");
         Player player = GameManager.getPlayer(client.getSessionId().toString());
-        JSONObject result = player.getRoom().playerChuCard(player, req.getInteger("data"));
+        Room belongRoom = GameManager.getBelongRoom(player);
+        JSONObject result = belongRoom.playerChuCard(player, req.getInteger("data"));
         SocketHelper._notify("chu_card_res",0,result.get("data"),callindex, client);
     }
 
     private void handleChuBuCard(SocketIOClient client, JSONObject req) {
         Player player = GameManager.getPlayer(client.getSessionId().toString());
-        player.getRoom().playerChuBuCard(player, req.getInteger("data"));
+        Room belongRoom = GameManager.getBelongRoom(player);
+        belongRoom.playerChuBuCard(player, req.getInteger("data"));
     }
 
     private void handlePlayerRobMaster(SocketIOClient client, JSONObject req) {
         Player player = GameManager.getPlayer(client.getSessionId().toString());
-        player.getRoom().playerRobMaster(player, req.getInteger("data"));
+        Room belongRoom = GameManager.getBelongRoom(player);
+        belongRoom.playerRobMaster(player, req.getInteger("data"));
     }
 
     private void handleWxLogin(SocketIOClient client, JSONObject req) {
@@ -106,21 +109,22 @@ public class EventHandler {
     private void handleEnterRoom(SocketIOClient client, JSONObject req) {
         JSONObject data = req.getJSONObject("data");
         Player player = GameManager.getPlayer(client.getSessionId().toString());
-        Room room = player.getRoom();
-        JSONObject enterRoomParam = room.enterRoom(player);
+        Room belongRoom = GameManager.getBelongRoom(player);
+        JSONObject enterRoomParam = belongRoom.enterRoom(player);
         SocketHelper._notify("createroom_resp", 0, enterRoomParam, req.getInteger("callindex"), client);
     }
 
     private void handlePlayerReady(SocketIOClient client, JSONObject req) {
         Player player = GameManager.getPlayer(client.getSessionId().toString());
         player.setReady(true);
-        Room room = player.getRoom();
-        room.playerReady(player);
+        Room belongRoom = GameManager.getBelongRoom(player);
+        belongRoom.playerReady(player);
     }
 
     private void handlePlayerStart(SocketIOClient client, JSONObject req) {
         Player player = GameManager.getPlayer(client.getSessionId().toString());
-        int err_code = player.getRoom().playerStart(player);
+        Room belongRoom = GameManager.getBelongRoom(player);
+        int err_code = belongRoom.playerStart(player);
         SocketHelper._notify("playerStart", err_code, null, req.getInteger("callindex"), client);
     }
 }

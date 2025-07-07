@@ -15,8 +15,7 @@ public class Player {
     private String avatarUrl;
     private Long gold;
     private SocketIOClient socket;
-    private GameManager gameManager;
-    private Room room;
+//    private Room room;
     private int seatIndex;
     private boolean isReady;
     private List<Card> cards;
@@ -27,8 +26,7 @@ public class Player {
         this.avatarUrl = info.getAvatarUrl();
         this.gold = info.getGoldCount();
         this.socket = socket;
-//        this.gameManager = gameManager;
-        this.room = null;
+//        this.room = null;
         this.seatIndex = 0;
         this.isReady = false;
         this.cards = new ArrayList<>();

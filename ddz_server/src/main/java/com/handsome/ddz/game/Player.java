@@ -106,4 +106,8 @@ public class Player {
     public void sendChuCard(Object data) {
         _notify("can_chu_card_notify",0,data,0);
     }
+
+    public int hashCode(){
+        return super.hashCode();
+    }
 }

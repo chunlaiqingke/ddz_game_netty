@@ -13,6 +13,7 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 
 /**
  * 房间里应该包含：玩家列表，房间状态，房主，观战人
@@ -196,10 +197,7 @@ public class Room {
                 turnRob();
                 break;
             case ROOM_SHOWBOTTOMCARD:
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                }
+
                 changeState(RoomStatus.ROOM_PLAYING);
                 //下个当前状态给客户端
                 for (Player player : this.playerList) {
@@ -218,6 +216,7 @@ public class Room {
 
     private void turnRob() {
         if(this.robPlayer.isEmpty()){
+            System.out.println("rob player end");
             //都抢过了，需要确定最终地主人选,直接退出
             changeMaster();
             //改变房间状态，显示底牌
@@ -262,7 +261,8 @@ public class Room {
         int index = master_index;
         for(int i=this.playerList.size()-1;i>=0;i--){
             int real_index = index % this.playerList.size();
-            this.playingCards.set(i, this.playerList.get(real_index));
+            System.out.println("real_index:"+real_index);
+            this.playingCards.add(0, this.playerList.get(real_index));
             index++;
         }
 
@@ -276,7 +276,7 @@ public class Room {
     }
 
     private void turnchuCard() {
-        Player cur_chu_card_player = this.playingCards.remove(this.playingCards.size());
+        Player cur_chu_card_player = this.playingCards.remove(this.playingCards.size() - 1);
         for(Player player : this.playerList){
             //通知下一个出牌的玩家
             player.sendChuCard(cur_chu_card_player.getAccountId());
@@ -314,7 +314,7 @@ public class Room {
         turnchuCard();
     }
 
-    public JSONObject playerChuCard(Player player, Integer data) {
+    public void playerChuCard(Player player, Integer data, BiConsumer<Integer,JSONObject> callback) {
         //当前没有出牌,不用走下面判断
 
         if(data==0){
@@ -323,11 +323,12 @@ public class Room {
             dataObj.put("account",player.getAccountId());
             dataObj.put("msg","choose card sucess");
             resp.put("data",dataObj);
+            callback.accept(0, resp);
             //让下一个玩家出牌,并发送消息
             this.playerChuBuCard(null,null);
-            return resp;
+            return;
         }
 
-        return null;
+        return;
     }
 }

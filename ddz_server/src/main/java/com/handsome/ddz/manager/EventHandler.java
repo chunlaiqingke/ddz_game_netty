@@ -51,8 +51,13 @@ public class EventHandler {
         int callindex = req.getInteger("callindex");
         Player player = GameManager.getPlayer(client.getSessionId().toString());
         Room belongRoom = GameManager.getBelongRoom(player);
-        JSONObject result = belongRoom.playerChuCard(player, req.getInteger("data"));
-        SocketHelper._notify("chu_card_res",0,result.get("data"),callindex, client);
+        belongRoom.playerChuCard(player, req.getInteger("data"), (err, res) -> {
+            if(err != 0){
+                SocketHelper._notify("chu_card_res",err,res.get("data"),callindex, client);
+            }
+            SocketHelper._notify("chu_card_res",0,res.get("data"),callindex, client);
+        });
+
     }
 
     private void handleChuBuCard(SocketIOClient client, JSONObject req) {

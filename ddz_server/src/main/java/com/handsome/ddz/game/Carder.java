@@ -2,10 +2,7 @@ package com.handsome.ddz.game;
 
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Data
 public class Carder {
@@ -64,15 +61,7 @@ public class Carder {
 
     private void shuffle() {
         // 获取当前时间戳
-        long seed = System.currentTimeMillis();
-        // 使用随机数生成器进行洗牌
-        for (int i = cardList.size() - 1; i > 0; i--) {
-            // 生成随机索引
-            int j = (int) (seed % (i + 1));
-            // 交换当前索引和随机索引处的元素
-            Card temp = cardList.get(i);
-            cardList.set(i, cardList.get(j));
-        }
+        Collections.shuffle(cardList);
     }
 
     public List<List<Card>> splitThreeCards() {

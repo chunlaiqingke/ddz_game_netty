@@ -48,10 +48,6 @@ public class Player {
         _notify("player_joinroom_notify", 0, data, 0);
     }
 
-    public void sendPlayerReady(JSONObject data) {
-        _notify("player_ready_notify", 0, data, 0);
-    }
-
     public void gameStart() {
         _notify("gameStart_notify", 0, new JSONObject(), 0);
     }

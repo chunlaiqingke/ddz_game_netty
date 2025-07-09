@@ -82,10 +82,6 @@ public class Player {
         _notify("change_showcard_notify", 0, data, 0);
     }
 
-    public void sendCanChuCard(JSONObject data) {
-        _notify("can_chu_card_notify", 0, data, 0);
-    }
-
     public void sendRoomState(Object data) {
         _notify("room_state_notify", 0, data, 0);
     }

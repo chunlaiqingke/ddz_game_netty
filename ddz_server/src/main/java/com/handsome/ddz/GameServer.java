@@ -9,9 +9,15 @@ import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DataListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
+import com.corundumstudio.socketio.listener.ExceptionListener;
 import com.handsome.ddz.manager.EventHandler;
 import com.handsome.ddz.manager.GameManager;
+import io.netty.channel.ChannelHandlerContext;
+import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
+@Slf4j
 public class GameServer {
 
     public static void main(String[] args) {
@@ -55,7 +61,11 @@ public class GameServer {
             @Override
             public void onData(SocketIOClient client, JSONObject req, AckRequest ackRequest) throws Exception {
                 System.out.println("client id: " + client.getSessionId().toString());
-                eventHandler.handleEvent(client, req);
+                try {
+                    eventHandler.handleEvent(client, req);
+                } catch (Exception e) {
+                    log.error("handle event error: ", e);
+                }
             }
         });
 

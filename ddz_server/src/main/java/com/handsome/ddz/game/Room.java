@@ -201,7 +201,7 @@ public class Room {
                 changeState(RoomStatus.ROOM_PLAYING);
                 //下个当前状态给客户端
                 for (Player player : this.playerList) {
-                    player.sendRoomState(RoomStatus.ROOM_PLAYING);
+                    player.sendRoomState(RoomStatus.ROOM_PLAYING.getCode());
                 }
                 break;
             case ROOM_PLAYING:

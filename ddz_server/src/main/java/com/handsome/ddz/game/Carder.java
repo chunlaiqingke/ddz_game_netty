@@ -1,6 +1,8 @@
 package com.handsome.ddz.game;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,31 +19,53 @@ public class Carder {
     private List<Card> cardList = new ArrayList<>();
 
     public Carder() {
-        cardValue.put("A",12);
-        cardValue.put("2",13);
-        cardValue.put("3",1);
-        cardValue.put("4",2);
-        cardValue.put("5",3);
-        cardValue.put("6",4);
-        cardValue.put("7",5);
-        cardValue.put("8",6);
-        cardValue.put("9",7);
-        cardValue.put("10",8);
-        cardValue.put("J",9);
-        cardValue.put("Q",10);
-        cardValue.put("K",11);
+        cardValue.put("A", 12);
+        cardValue.put("2", 13);
+        cardValue.put("3", 1);
+        cardValue.put("4", 2);
+        cardValue.put("5", 3);
+        cardValue.put("6", 4);
+        cardValue.put("7", 5);
+        cardValue.put("8", 6);
+        cardValue.put("9", 7);
+        cardValue.put("10", 8);
+        cardValue.put("J", 9);
+        cardValue.put("Q", 10);
+        cardValue.put("K", 11);
 
         // 黑桃：spade 红桃：heart 梅花：club 方片：diamond
-        cardShape.put("S",1);
-        cardShape.put("H",2);
-        cardShape.put("C",3);
-        cardShape.put("D",4);
+        cardShape.put("S", 1);
+        cardShape.put("H", 2);
+        cardShape.put("C", 3);
+        cardShape.put("D", 4);
 
-        kings.put("Kx",14);
-        kings.put("Kd",15);
+        kings.put("Kx", 14);
+        kings.put("Kd", 15);
 
         initCardList();
         shuffle();
+
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static enum CardLevel{
+        ONE(1, "one"),
+        DOUBLE(1, "double"),
+        THREE(1, "three"),
+        BOOM(2, "boom"),
+        THREE_WITH_ONE(1, "threeWithOne"),
+        THREE_WITH_TWO(1, "threeWithTwo"),
+        PLANE(1, "plane"),
+        PLANE_WITH_SINGLE(1, "planeWithSingle"),
+        PLANE_WITH_TWO(1, "planeWithTwo"),
+        STRAIGHT(1, "straight"),
+        DOUBLE_SCROLL(1, "doubleScroll"),
+        KING_BOOM(3, "kingboom"),
+        NOT_SUPPORT(0, "notSupport"),
+        ;
+        private int level;
+        private String type;
     }
 
     public void initCardList() {
@@ -187,7 +211,8 @@ public class Carder {
         return king0 == 14 && king1 == 15 || king0 == 15 && king1 == 14;
     }
 
-    public boolean isPlan(List<Card> cardList) {
+    //飞机
+    public boolean isPlane(List<Card> cardList) {
         if (cardList.size() != 6) {
             return false;
         }
@@ -210,7 +235,7 @@ public class Carder {
     }
 
     //飞机带2单
-    public boolean isPlanWithSingle(List<Card> cardList) {
+    public boolean isPlaneWithSingle(List<Card> cardList) {
         if (cardList.size() != 8) {
             return false;
         }
@@ -233,11 +258,137 @@ public class Carder {
             return false;
         }
         List<Card> collect = numCards.stream().filter(card -> card.getValue() == nums[0] || card.getValue() == nums[1]).collect(Collectors.toList());
-        return this.isPlan(collect);
+        return this.isPlane(collect);
+    }
+
+    //飞机带2对
+    public boolean isPlaneWithDouble(List<Card> cardList){
+        if (cardList.size() != 10) {
+            return false;
+        }
+        List<Card> numCards = cardList.stream().filter(card -> card.getValue() != null).collect(Collectors.toList());
+        if (numCards.size() < 10) {
+            return false;
+        }
+        Map<Integer, List<Card>> valueMap = numCards.stream().collect(Collectors.groupingBy(Card::getValue));
+
+        int[] nums = new int[2];
+        int threeCount = 0;
+        int twoCount = 0;
+        for (Integer value : valueMap.keySet()) {
+            List<Card> cards = valueMap.get(value);
+            if (cards.size() == 3) {
+                nums[0] = value;
+                threeCount ++;
+            }
+            if (cards.size() == 2) {
+                twoCount ++;
+            }
+        }
+        if (threeCount != 2) {
+            return false;
+        }
+        if (twoCount != 2) {
+            return false;
+        }
+
+        List<Card> collect = numCards.stream().filter(card -> card.getValue() == nums[0] || card.getValue() == nums[1]).collect(Collectors.toList());
+        return this.isPlane(collect);
+    }
+
+    //顺子
+    public boolean isStraight(List<Card> cardList) {
+        if (cardList.size() < 5 || cardList.size() > 12) {
+            return false;
+        }
+        List<Card> kingCards = cardList.stream().filter(card -> card.getValue() == null).collect(Collectors.toList());
+        if (!kingCards.isEmpty()) {
+            return false;
+        }
+        List<Card> collect = cardList.stream().sorted(Comparator.comparingInt(Card::getValue)).collect(Collectors.toList());
+        for (int i = 0; i < collect.size() - 1; i++) {
+            if (collect.get(i).getValue() + 1 != collect.get(i + 1).getValue()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    //连对
+    public boolean isDoubleScroll(List<Card> cardList) {
+        if (cardList.size() < 6) {
+            return false;
+        }
+        if (cardList.size() % 2 != 0) {
+            return false;
+        }
+        //判断是不是连对
+        List<Card> kingCards = cardList.stream().filter(card -> card.getValue() == null).collect(Collectors.toList());
+        if (!kingCards.isEmpty()) {
+            return false;
+        }
+        List<Card> collect = cardList.stream().sorted(Comparator.comparingInt(Card::getValue)).collect(Collectors.toList());
+        for (int i = 0; i < collect.size() - 3; i += 2) {
+            if (collect.get(i).getValue() + 1 != collect.get(i + 2).getValue()) {
+                return false;
+            }
+            if (collect.get(i).getValue() != collect.get(i + 1).getValue()) {
+                return false;
+            }
+        }
+        return true;
     }
 
 
-    public Object isCanPushs(Integer data) {
-        return null;
+    public CardLevel isCanPushs(List<Card> pushCardList) {
+        if (isOneCard(pushCardList)) {
+            return CardLevel.ONE;
+        }
+
+        if(isDoubleCard(pushCardList)){
+            return CardLevel.DOUBLE;
+        }
+
+        if(isThreeCard(pushCardList)){
+            return CardLevel.THREE;
+        }
+
+        if(isThreeAndOne(pushCardList)){
+            return CardLevel.THREE_WITH_ONE;
+        }
+
+        if(isThreeAndTwo(pushCardList)){
+            return CardLevel.THREE_WITH_TWO;
+        }
+
+        if(isBoom(pushCardList)){
+            return CardLevel.BOOM;
+        }
+
+        if(isKingBoom(pushCardList)){
+            return CardLevel.KING_BOOM;
+        }
+
+        if(isPlane(pushCardList)){
+            return CardLevel.PLANE;
+        }
+
+        if(isPlaneWithSingle(pushCardList)){
+            return CardLevel.PLANE_WITH_SINGLE;
+        }
+
+        if(isPlaneWithDouble(pushCardList)){
+            return CardLevel.PLANE_WITH_TWO;
+        }
+
+        if(isStraight(pushCardList)){
+            return CardLevel.STRAIGHT;
+        }
+
+        if(isDoubleScroll(pushCardList)){
+            return CardLevel.DOUBLE_SCROLL;
+        }
+        //return false
+        return CardLevel.NOT_SUPPORT;
     }
 }

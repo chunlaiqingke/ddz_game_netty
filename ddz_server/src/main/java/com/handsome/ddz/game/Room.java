@@ -1,7 +1,6 @@
 package com.handsome.ddz.game;
 
 import com.alibaba.fastjson.JSONObject;
-import com.corundumstudio.socketio.SocketIOClient;
 import com.handsome.ddz.config.GameConfig;
 import com.handsome.ddz.config.RobStatus;
 import com.handsome.ddz.config.RoomConfig;
@@ -314,10 +313,10 @@ public class Room {
         turnchuCard();
     }
 
-    public void playerChuCard(Player player, Integer data, BiConsumer<Integer,JSONObject> callback) {
+    public void playerChuCard(Player player, Object data, BiConsumer<Integer,JSONObject> callback) {
         //当前没有出牌,不用走下面判断
 
-        if(data==0){
+        if(Objects.equals(data, 0)){
             JSONObject resp = new JSONObject();
             JSONObject dataObj = new JSONObject();
             dataObj.put("account",player.getAccountId());
@@ -327,6 +326,24 @@ public class Room {
             //让下一个玩家出牌,并发送消息
             this.playerChuBuCard(null,null);
             return;
+        }
+
+        if (data instanceof JSONObject) {
+            JSONObject dataObj = (JSONObject) data;
+            String jsonString = dataObj.toJSONString();
+            List<Card> cards = JSONObject.parseArray(jsonString, Card.class);
+            Carder.CardType cardType = this.carder.isCanPushs(cards);
+            if (cardType == Carder.CardType.NOT_SUPPORT) {
+                JSONObject resp = new JSONObject();
+                JSONObject d = new JSONObject();
+                d.put("account",player.getAccountId());
+                d.put("msg","choose card sucess");
+                resp.put("data",d);
+                callback.accept(-1, resp);
+                return;
+            } else {
+
+            }
         }
 
         return;

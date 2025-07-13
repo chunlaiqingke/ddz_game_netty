@@ -49,7 +49,7 @@ public class Carder {
 
     @Getter
     @AllArgsConstructor
-    public static enum CardLevel{
+    public enum CardType{
         ONE(1, "one"),
         DOUBLE(1, "double"),
         THREE(1, "three"),
@@ -339,56 +339,153 @@ public class Carder {
         return true;
     }
 
+    public CardType getCardType(List<Card> cardList) {
+        return this.isCanPushs(cardList);
+    }
 
-    public CardLevel isCanPushs(List<Card> pushCardList) {
+    public CardType isCanPushs(List<Card> pushCardList) {
         if (isOneCard(pushCardList)) {
-            return CardLevel.ONE;
+            return CardType.ONE;
         }
 
         if(isDoubleCard(pushCardList)){
-            return CardLevel.DOUBLE;
+            return CardType.DOUBLE;
         }
 
         if(isThreeCard(pushCardList)){
-            return CardLevel.THREE;
+            return CardType.THREE;
         }
 
         if(isThreeAndOne(pushCardList)){
-            return CardLevel.THREE_WITH_ONE;
+            return CardType.THREE_WITH_ONE;
         }
 
         if(isThreeAndTwo(pushCardList)){
-            return CardLevel.THREE_WITH_TWO;
+            return CardType.THREE_WITH_TWO;
         }
 
         if(isBoom(pushCardList)){
-            return CardLevel.BOOM;
+            return CardType.BOOM;
         }
 
         if(isKingBoom(pushCardList)){
-            return CardLevel.KING_BOOM;
+            return CardType.KING_BOOM;
         }
 
         if(isPlane(pushCardList)){
-            return CardLevel.PLANE;
+            return CardType.PLANE;
         }
 
         if(isPlaneWithSingle(pushCardList)){
-            return CardLevel.PLANE_WITH_SINGLE;
+            return CardType.PLANE_WITH_SINGLE;
         }
 
         if(isPlaneWithDouble(pushCardList)){
-            return CardLevel.PLANE_WITH_TWO;
+            return CardType.PLANE_WITH_TWO;
         }
 
         if(isStraight(pushCardList)){
-            return CardLevel.STRAIGHT;
+            return CardType.STRAIGHT;
         }
 
         if(isDoubleScroll(pushCardList)){
-            return CardLevel.DOUBLE_SCROLL;
+            return CardType.DOUBLE_SCROLL;
         }
         //return false
-        return CardLevel.NOT_SUPPORT;
+        return CardType.NOT_SUPPORT;
+    }
+
+    public boolean compareWithCard(List<Card> lastPushCardList, List<Card> pushCardList){
+        if (lastPushCardList.size() != pushCardList.size()) {
+            return false;
+        }
+        CardType lastCardType = getCardType(lastPushCardList);
+        CardType curCardType = getCardType(pushCardList);
+        if (curCardType != lastCardType) {
+            return false;
+        } else {
+            return compare(lastPushCardList, pushCardList, lastCardType);
+        }
+    }
+
+    private boolean compare(List<Card> cardA, List<Card> cardB, CardType cardType) {
+        boolean result;
+        switch(cardType){
+            case ONE:
+                result = compareOne(cardA,cardB);
+                break;
+            case DOUBLE:
+                result = compareDouble(cardA,cardB);
+                break;
+            case THREE:
+                result = compareThree(cardA,cardB);
+                break;
+            case BOOM:
+                result = compareBoom(cardA,cardB);
+                break;
+            case KING_BOOM:
+                result = compareBoomKing(cardA,cardB);
+                break;
+            case PLANE_WITH_SINGLE:
+                result = comparePlanWithSing(cardA,cardB);
+                break;
+            case PLANE_WITH_TWO:
+                result = comparePlanWithTwo(cardA,cardB);
+                break;
+            case PLANE:
+                result = comparePlane(cardA,cardB);
+                break;
+            case STRAIGHT:
+                result = compareScroll(cardA,cardB);
+                break;
+            case DOUBLE_SCROLL:
+                result = compareDoubleScroll(cardA,cardB);
+                break;
+            default:
+                result = false;
+                break;
+        }
+
+        return result;
+    }
+
+    private boolean compareDoubleScroll(List<Card> cardA, List<Card> cardB) {
+        return false;
+    }
+
+    private boolean compareScroll(List<Card> cardA, List<Card> cardB) {
+        return false;
+    }
+
+    private boolean comparePlane(List<Card> cardA, List<Card> cardB) {
+        return false;
+    }
+
+    private boolean comparePlanWithTwo(List<Card> cardA, List<Card> cardB) {
+        return false;
+    }
+
+    private boolean comparePlanWithSing(List<Card> cardA, List<Card> cardB) {
+        return false;
+    }
+
+    private boolean compareBoomKing(List<Card> cardA, List<Card> cardB) {
+        return false;
+    }
+
+    private boolean compareBoom(List<Card> cardA, List<Card> cardB) {
+        return false;
+    }
+
+    private boolean compareThree(List<Card> cardA, List<Card> cardB) {
+        return false;
+    }
+
+    private boolean compareDouble(List<Card> cardA, List<Card> cardB) {
+        return false;
+    }
+
+    private boolean compareOne(List<Card> cardA, List<Card> cardB) {
+        return false;
     }
 }

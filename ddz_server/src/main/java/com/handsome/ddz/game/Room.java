@@ -368,13 +368,24 @@ public class Room {
                     d.put("msg","choose card sucess");
                     d.put("cardvalue", cardType);
                     resp.put("data",d);
+                    callback.accept(0, resp);
+                    //通知下一个玩家出牌
+                    this.playerChuBuCard(null,null);
+                    //把该玩家出的牌广播给其他玩家
+                    sendPlayerPushCard(player, pushCards);
+                    return;
+                } else {
+                    JSONObject resp = new JSONObject();
+                    JSONObject d = new JSONObject();
+                    d.put("account",player.getAccountId());
+                    d.put("msg","当前牌太小");
+                    d.put("cardvalue", cardType);
+                    resp.put("data",d);
                     callback.accept(-2, resp);
                     return;
                 }
             }
         }
-
-        return;
     }
 
     //player出牌的玩家

@@ -331,8 +331,8 @@ public class Room {
         if (data instanceof JSONObject) {
             JSONObject dataObj = (JSONObject) data;
             String jsonString = dataObj.toJSONString();
-            List<Card> cards = JSONObject.parseArray(jsonString, Card.class);
-            Carder.CardType cardType = this.carder.isCanPushs(cards);
+            List<Card> pushCards = JSONObject.parseArray(jsonString, Card.class);
+            Carder.CardType cardType = this.carder.isCanPushs(pushCards);
             if (cardType == Carder.CardType.NOT_SUPPORT) {
                 JSONObject resp = new JSONObject();
                 JSONObject d = new JSONObject();
@@ -342,10 +342,55 @@ public class Room {
                 callback.accept(-1, resp);
                 return;
             } else {
-
+                if (lastPushCardList.isEmpty()) {
+                    //自己牌权
+                    //出牌成功
+                    this.lastPushCardList = pushCards;
+                    this.lastPushCardAccountId = player.getAccountId();
+                    JSONObject resp = new JSONObject();
+                    JSONObject d = new JSONObject();
+                    d.put("account",player.getAccountId());
+                    d.put("msg","sucess");
+                    d.put("cardvalue", cardType);
+                    resp.put("data",d);
+                    callback.accept(0, resp);
+                    //通知下一个玩家出牌
+                    this.playerChuBuCard(null, null);
+                    //把该玩家出的牌广播给其他玩家
+                    this.sendPlayerPushCard(player,pushCards);
+                    return;
+                }
+                boolean b = carder.compareWithCard(lastPushCardList, pushCards);
+                if (b) {
+                    JSONObject resp = new JSONObject();
+                    JSONObject d = new JSONObject();
+                    d.put("account",player.getAccountId());
+                    d.put("msg","choose card sucess");
+                    d.put("cardvalue", cardType);
+                    resp.put("data",d);
+                    callback.accept(-2, resp);
+                    return;
+                }
             }
         }
 
         return;
+    }
+
+    //player出牌的玩家
+    public void sendPlayerPushCard(Player player, List<Card> cards){
+        if(player==null || cards.isEmpty()){
+            return;
+        }
+        for(Player p : playerList) {
+            if (p == player) {
+                continue;
+            }
+            JSONObject data = new JSONObject();
+            data.put("accountid", player.getAccountId());
+            data.put("cards", cards);
+            player.sendOtherChuCard(data);
+        }
+        player.removePushCard(cards);
     }
 }

@@ -102,4 +102,13 @@ public class Player {
     public int hashCode(){
         return super.hashCode();
     }
+
+    public void removePushCard(List<Card> cards) {
+        if (cards == null || cards.isEmpty()) {
+            return;
+        }
+        for (Card card : cards) {
+            this.cards.remove(card);
+        }
+    }
 }

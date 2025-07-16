@@ -183,7 +183,7 @@ public class Room {
                 this.threeCards = this.carder.splitThreeCards();
                 for(int i = 0; i < this.playerList.size(); i++){
                     Player player = playerList.get(i);
-                    player.sendCard(this.threeCards.get(i));
+                    player.sendCards(this.threeCards.get(i));
                 }
                 //切换到抢地主状态
                 changeState(RoomStatus.ROOM_ROBSTATE);
@@ -252,15 +252,16 @@ public class Room {
     private void resetChuCardPlayer() {
         int master_index = 0; //地主在列表中的位置
         for(int i=this.playerList.size()-1;i>=0;i--){
-            if(Objects.equals(this.playerList.get(0).getAccountId(), this.roomMaster.getAccountId())){
+            if(Objects.equals(this.playerList.get(i).getAccountId(), this.roomMaster.getAccountId())){
                 master_index = i;
+                System.out.println("master_index:"+master_index);
             }
         }
         //重新计算出牌的顺序
         int index = master_index;
         for(int i=this.playerList.size()-1;i>=0;i--){
             int real_index = index % this.playerList.size();
-            System.out.println("real_index:"+real_index);
+            System.out.println("real_index:"+real_index + ": id: " + this.playerList.get(real_index).getAccountId());
             this.playingCards.add(0, this.playerList.get(real_index));
             index++;
         }
@@ -373,7 +374,6 @@ public class Room {
                     this.playerChuBuCard(null,null);
                     //把该玩家出的牌广播给其他玩家
                     sendPlayerPushCard(player, pushCards);
-                    return;
                 } else {
                     JSONObject resp = new JSONObject();
                     JSONObject d = new JSONObject();
@@ -382,7 +382,6 @@ public class Room {
                     d.put("cardvalue", cardType);
                     resp.put("data",d);
                     callback.accept(-2, resp);
-                    return;
                 }
             }
         }

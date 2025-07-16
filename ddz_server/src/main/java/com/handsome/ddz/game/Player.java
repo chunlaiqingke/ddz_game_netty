@@ -39,7 +39,7 @@ public class Player {
         payload.put("data", data != null ? data : new JSONObject());
         payload.put("callBackIndex", callBackIndex);
 
-        System.out.println("notify = " + payload.toJSONString());
+        System.out.println(type + " = " + payload.toJSONString());
         socket.sendEvent("notify", payload);
     }
 
@@ -55,11 +55,6 @@ public class Player {
     public void sendPlayerChangeManage(JSONObject data) {
         System.out.println("sendPlayerChangeManage: account:" + data.getString("account"));
         _notify("changehousemanage_notify", 0, data, 0);
-    }
-
-    public void sendCards(List<Card> cards) {
-        this.cards = cards;
-        _notify("pushcard_notify", 0, cards, 0);
     }
 
     public void sendCanRob(Object data) {
@@ -90,7 +85,7 @@ public class Player {
         _notify("player_ready_notify", 0, accountId, 0);
     }
 
-    public void sendCard(List<Card> cards){
+    public void sendCards(List<Card> cards){
         this.cards = cards;
         _notify("pushcard_notify", 0, cards, 0);
     }

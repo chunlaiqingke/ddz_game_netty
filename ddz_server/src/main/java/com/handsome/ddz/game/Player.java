@@ -98,11 +98,11 @@ public class Player {
         return super.hashCode();
     }
 
-    public void removePushCard(List<Card> cards) {
+    public void removePushCard(List<ReqCard> cards) {
         if (cards == null || cards.isEmpty()) {
             return;
         }
-        for (Card card : cards) {
+        for (ReqCard card : cards) {
             this.cards.remove(card);
         }
     }

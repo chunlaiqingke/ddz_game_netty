@@ -119,7 +119,7 @@ public class Carder {
         return result;
     }
 
-    public boolean isOneCard(List<Card> cardList) {
+    public boolean isOneCard(List<ReqCard> cardList) {
         if (cardList == null || cardList.isEmpty()) {
             return false;
         }
@@ -127,7 +127,7 @@ public class Carder {
     }
 
     //是否对子
-    public boolean isDoubleCard (List<Card> cardList){
+    public boolean isDoubleCard (List<ReqCard> cardList){
         if (cardList == null || cardList.isEmpty()) {
             return false;
         }
@@ -135,37 +135,37 @@ public class Carder {
             return false;
         }
         //cardList[0].value==undefined说明是大小王，值是存储在king字段
-        return cardList.get(0).getValue() != null
-                && Objects.equals(cardList.get(1).getValue(), cardList.get(0).getValue());
+        return cardList.get(0).getCard_data().getValue() != null
+                && Objects.equals(cardList.get(1).getCard_data().getValue(), cardList.get(0).getCard_data().getValue());
     }
 
     //三张不带
-    public boolean isThreeCard (List<Card> cardList){
+    public boolean isThreeCard (List<ReqCard> cardList){
         if(cardList.size() != 3){
             return false;
         }
         //不能是大小王
-        boolean hasKing = cardList.stream().anyMatch(card -> card.getKing() != null);
+        boolean hasKing = cardList.stream().anyMatch(card -> card.getCard_data().getKing() != null);
         if (hasKing) {
             return false;
         }
         //判断三张牌是否相等
-        long count = cardList.stream().map(Card::getValue).distinct().count();
+        long count = cardList.stream().map(r -> r.getCard_data().getValue()).distinct().count();
         return count == 1;
     }
 
     //三带一
-    public boolean isThreeAndOne(List<Card> cardList) {
+    public boolean isThreeAndOne(List<ReqCard> cardList) {
         if(cardList.size() != 4){
             return false;
         }
-        List<Card> numCards = cardList.stream().filter(card -> card.getValue() != null).collect(Collectors.toList());
+        List<ReqCard> numCards = cardList.stream().filter(card -> card.getCard_data().getValue() != null).collect(Collectors.toList());
         if (numCards.size() < 3) {
             return false;
         }
-        Map<Integer, List<Card>> cardMap = numCards.stream().collect(Collectors.groupingBy(Card::getValue));
+        Map<Integer, List<ReqCard>> cardMap = numCards.stream().collect(Collectors.groupingBy(r -> r.getCard_data().getValue()));
         for (Integer key : cardMap.keySet()) {
-            List<Card> value = cardMap.get(key);
+            List<ReqCard> value = cardMap.get(key);
             if (value.size() == 3) {
                 return true;
             }
@@ -173,82 +173,82 @@ public class Carder {
         return false;
     }
 
-    public boolean isThreeAndTwo(List<Card> cardList) {
+    public boolean isThreeAndTwo(List<ReqCard> cardList) {
         if(cardList.size() != 5){
             return false;
         }
-        List<Card> numCards = cardList.stream().filter(card -> card.getValue() != null).collect(Collectors.toList());
+        List<ReqCard> numCards = cardList.stream().filter(card -> card.getCard_data().getValue() != null).collect(Collectors.toList());
         if (numCards.size() < 5) {
             return false;
         }
-        Map<Integer, List<Card>> cardMap = numCards.stream().collect(Collectors.groupingBy(Card::getValue));
+        Map<Integer, List<ReqCard>> cardMap = numCards.stream().collect(Collectors.groupingBy(r -> r.getCard_data().getValue()));
         if (cardMap.size() != 2) {
             return false;
         }
-        List<List<Card>> values = new ArrayList<>(cardMap.values());
-        List<Card> cards0 = values.get(0);
-        List<Card> cards1 = values.get(1);
+        List<List<ReqCard>> values = new ArrayList<>(cardMap.values());
+        List<ReqCard> cards0 = values.get(0);
+        List<ReqCard> cards1 = values.get(1);
         if (cards0.size() == 3 && cards1.size() == 2 || cards0.size() == 2 && cards1.size() == 3) {
             return true;
         }
         return false;
     }
 
-    public boolean isBoom(List<Card> cardList) {
+    public boolean isBoom(List<ReqCard> cardList) {
         if (cardList.size() != 4) {
             return false;
         }
-        long count = cardList.stream().map(Card::getValue).distinct().count();
+        long count = cardList.stream().map(r -> r.getCard_data().getValue()).distinct().count();
         return count == 1;
     }
 
-    public boolean isKingBoom(List<Card> cardList) {
+    public boolean isKingBoom(List<ReqCard> cardList) {
         if (cardList.size() != 2) {
             return false;
         }
-        Integer king0 = cardList.get(0).getKing();
-        Integer king1 = cardList.get(1).getKing();
+        Integer king0 = cardList.get(0).getCard_data().getKing();
+        Integer king1 = cardList.get(1).getCard_data().getKing();
         return king0 == 14 && king1 == 15 || king0 == 15 && king1 == 14;
     }
 
     //飞机
-    public boolean isPlane(List<Card> cardList) {
+    public boolean isPlane(List<ReqCard> cardList) {
         if (cardList.size() != 6) {
             return false;
         }
-        List<Card> numCards = cardList.stream().filter(card -> card.getValue() != null).collect(Collectors.toList());
+        List<ReqCard> numCards = cardList.stream().filter(card -> card.getCard_data().getValue() != null).collect(Collectors.toList());
         if (numCards.size() < 6) {
             return false;
         }
-        Map<Integer, List<Card>> cardMap = numCards.stream().collect(Collectors.groupingBy(Card::getValue));
+        Map<Integer, List<ReqCard>> cardMap = numCards.stream().collect(Collectors.groupingBy(r -> r.getCard_data().getValue()));
         if (cardMap.size() != 2) {
             return false;
         }
-        List<List<Card>> values = new ArrayList<>(cardMap.values());
+        List<List<ReqCard>> values = new ArrayList<>(cardMap.values());
         if (values.get(0).size() != 3 || values.get(1).size() != 3) {
             return false;
         }
-        Integer value0 = values.get(0).get(0).getValue();
-        Integer value1 = values.get(1).get(0).getValue();
+        Integer value0 = values.get(0).get(0).getCard_data().getValue();
+        Integer value1 = values.get(1).get(0).getCard_data().getValue();
         return Math.abs(value0 - value1) == 1
                 && (value0 != 12 && value1 != 12);
     }
 
     //飞机带2单
-    public boolean isPlaneWithSingle(List<Card> cardList) {
+    public boolean isPlaneWithSingle(List<ReqCard> cardList) {
         if (cardList.size() != 8) {
             return false;
         }
-        List<Card> numCards = cardList.stream().filter(card -> card.getValue() != null).collect(Collectors.toList());
+        List<ReqCard> numCards = cardList.stream().filter(card -> card.getCard_data().getValue() != null).collect(Collectors.toList());
         if (numCards.size() < 6) {
             return false;
         }
-        Map<Integer, List<Card>> valueMap = numCards.stream().collect(Collectors.groupingBy(Card::getValue));
+        Map<Integer, List<ReqCard>> valueMap = numCards.stream().collect(Collectors.groupingBy(r -> r.getCard_data().getValue()));
 
         int[] nums = new int[2];
         int threeCount = 0;
         for (Integer value : valueMap.keySet()) {
-            List<Card> cards = valueMap.get(value);
+            List<ReqCard> cards = valueMap.get(value);
             if (cards.size() == 3) {
                 nums[0] = value;
                 threeCount ++;
@@ -257,26 +257,26 @@ public class Carder {
         if (threeCount != 2) {
             return false;
         }
-        List<Card> collect = numCards.stream().filter(card -> card.getValue() == nums[0] || card.getValue() == nums[1]).collect(Collectors.toList());
+        List<ReqCard> collect = numCards.stream().filter(card -> card.getCard_data().getValue() == nums[0] || card.getCard_data().getValue() == nums[1]).collect(Collectors.toList());
         return this.isPlane(collect);
     }
 
     //飞机带2对
-    public boolean isPlaneWithDouble(List<Card> cardList){
+    public boolean isPlaneWithDouble(List<ReqCard> cardList){
         if (cardList.size() != 10) {
             return false;
         }
-        List<Card> numCards = cardList.stream().filter(card -> card.getValue() != null).collect(Collectors.toList());
+        List<ReqCard> numCards = cardList.stream().filter(card -> card.getCard_data().getValue() != null).collect(Collectors.toList());
         if (numCards.size() < 10) {
             return false;
         }
-        Map<Integer, List<Card>> valueMap = numCards.stream().collect(Collectors.groupingBy(Card::getValue));
+        Map<Integer, List<ReqCard>> valueMap = numCards.stream().collect(Collectors.groupingBy(r -> r.getCard_data().getValue()));
 
         int[] nums = new int[2];
         int threeCount = 0;
         int twoCount = 0;
         for (Integer value : valueMap.keySet()) {
-            List<Card> cards = valueMap.get(value);
+            List<ReqCard> cards = valueMap.get(value);
             if (cards.size() == 3) {
                 nums[0] = value;
                 threeCount ++;
@@ -292,22 +292,22 @@ public class Carder {
             return false;
         }
 
-        List<Card> collect = numCards.stream().filter(card -> card.getValue() == nums[0] || card.getValue() == nums[1]).collect(Collectors.toList());
+        List<ReqCard> collect = numCards.stream().filter(card -> card.getCard_data().getValue() == nums[0] || card.getCard_data().getValue() == nums[1]).collect(Collectors.toList());
         return this.isPlane(collect);
     }
 
     //顺子
-    public boolean isStraight(List<Card> cardList) {
+    public boolean isStraight(List<ReqCard> cardList) {
         if (cardList.size() < 5 || cardList.size() > 12) {
             return false;
         }
-        List<Card> kingCards = cardList.stream().filter(card -> card.getValue() == null).collect(Collectors.toList());
+        List<ReqCard> kingCards = cardList.stream().filter(card -> card.getCard_data().getValue() == null).collect(Collectors.toList());
         if (!kingCards.isEmpty()) {
             return false;
         }
-        List<Card> collect = cardList.stream().sorted(Comparator.comparingInt(Card::getValue)).collect(Collectors.toList());
+        List<ReqCard> collect = cardList.stream().sorted(Comparator.comparingInt(r -> r.getCard_data().getValue())).collect(Collectors.toList());
         for (int i = 0; i < collect.size() - 1; i++) {
-            if (collect.get(i).getValue() + 1 != collect.get(i + 1).getValue()) {
+            if (collect.get(i).getCard_data().getValue() + 1 != collect.get(i + 1).getCard_data().getValue()) {
                 return false;
             }
         }
@@ -315,7 +315,7 @@ public class Carder {
     }
 
     //连对
-    public boolean isDoubleScroll(List<Card> cardList) {
+    public boolean isDoubleScroll(List<ReqCard> cardList) {
         if (cardList.size() < 6) {
             return false;
         }
@@ -323,27 +323,27 @@ public class Carder {
             return false;
         }
         //判断是不是连对
-        List<Card> kingCards = cardList.stream().filter(card -> card.getValue() == null).collect(Collectors.toList());
+        List<ReqCard> kingCards = cardList.stream().filter(card -> card.getCard_data().getValue() == null).collect(Collectors.toList());
         if (!kingCards.isEmpty()) {
             return false;
         }
-        List<Card> collect = cardList.stream().sorted(Comparator.comparingInt(Card::getValue)).collect(Collectors.toList());
+        List<ReqCard> collect = cardList.stream().sorted(Comparator.comparingInt(r -> r.getCard_data().getValue())).collect(Collectors.toList());
         for (int i = 0; i < collect.size() - 3; i += 2) {
-            if (collect.get(i).getValue() + 1 != collect.get(i + 2).getValue()) {
+            if (collect.get(i).getCard_data().getValue() + 1 != collect.get(i + 2).getCard_data().getValue()) {
                 return false;
             }
-            if (collect.get(i).getValue() != collect.get(i + 1).getValue()) {
+            if (collect.get(i).getCard_data().getValue() != collect.get(i + 1).getCard_data().getValue()) {
                 return false;
             }
         }
         return true;
     }
 
-    public CardType getCardType(List<Card> cardList) {
+    public CardType getCardType(List<ReqCard> cardList) {
         return this.isCanPushs(cardList);
     }
 
-    public CardType isCanPushs(List<Card> pushCardList) {
+    public CardType isCanPushs(List<ReqCard> pushCardList) {
         if (isOneCard(pushCardList)) {
             return CardType.ONE;
         }
@@ -395,7 +395,7 @@ public class Carder {
         return CardType.NOT_SUPPORT;
     }
 
-    public boolean compareWithCard(List<Card> lastPushCardList, List<Card> pushCardList){
+    public boolean compareWithCard(List<ReqCard> lastPushCardList, List<ReqCard> pushCardList){
         if (lastPushCardList.size() != pushCardList.size()) {
             return false;
         }
@@ -408,7 +408,7 @@ public class Carder {
         }
     }
 
-    private boolean compare(List<Card> cardA, List<Card> cardB, CardType cardType) {
+    private boolean compare(List<ReqCard> cardA, List<ReqCard> cardB, CardType cardType) {
         boolean result;
         switch(cardType){
             case ONE:
@@ -449,43 +449,43 @@ public class Carder {
         return result;
     }
 
-    private boolean compareDoubleScroll(List<Card> cardA, List<Card> cardB) {
+    private boolean compareDoubleScroll(List<ReqCard> cardA, List<ReqCard> cardB) {
         return false;
     }
 
-    private boolean compareScroll(List<Card> cardA, List<Card> cardB) {
+    private boolean compareScroll(List<ReqCard> cardA, List<ReqCard> cardB) {
         return false;
     }
 
-    private boolean comparePlane(List<Card> cardA, List<Card> cardB) {
+    private boolean comparePlane(List<ReqCard> cardA, List<ReqCard> cardB) {
         return false;
     }
 
-    private boolean comparePlanWithTwo(List<Card> cardA, List<Card> cardB) {
+    private boolean comparePlanWithTwo(List<ReqCard> cardA, List<ReqCard> cardB) {
         return false;
     }
 
-    private boolean comparePlanWithSing(List<Card> cardA, List<Card> cardB) {
+    private boolean comparePlanWithSing(List<ReqCard> cardA, List<ReqCard> cardB) {
         return false;
     }
 
-    private boolean compareBoomKing(List<Card> cardA, List<Card> cardB) {
+    private boolean compareBoomKing(List<ReqCard> cardA, List<ReqCard> cardB) {
         return false;
     }
 
-    private boolean compareBoom(List<Card> cardA, List<Card> cardB) {
+    private boolean compareBoom(List<ReqCard> cardA, List<ReqCard> cardB) {
         return false;
     }
 
-    private boolean compareThree(List<Card> cardA, List<Card> cardB) {
+    private boolean compareThree(List<ReqCard> cardA, List<ReqCard> cardB) {
         return false;
     }
 
-    private boolean compareDouble(List<Card> cardA, List<Card> cardB) {
+    private boolean compareDouble(List<ReqCard> cardA, List<ReqCard> cardB) {
         return false;
     }
 
-    private boolean compareOne(List<Card> cardA, List<Card> cardB) {
+    private boolean compareOne(List<ReqCard> cardA, List<ReqCard> cardB) {
         return false;
     }
 }

@@ -49,9 +49,9 @@ public class Room {
 
     private List<Player> playingCards = new ArrayList<>();//存储出牌的用户(一轮)
 
-    private List<Card> curPushCardList = new ArrayList<>();//当前玩家出牌列表
+    private List<ReqCard> curPushCardList = new ArrayList<>();//当前玩家出牌列表
 
-    private List<Card> lastPushCardList = new ArrayList<>();//玩家上一次出的牌
+    private List<ReqCard> lastPushCardList = new ArrayList<>();//玩家上一次出的牌
 
     private String lastPushCardAccountId;//最后一个出牌的accountid
 
@@ -332,7 +332,7 @@ public class Room {
         JSONArray dataArr = req.getJSONArray("data");
         if (dataArr != null) {
             String jsonString = dataArr.toString();
-            List<Card> pushCards = JSONObject.parseArray(jsonString, Card.class);
+            List<ReqCard> pushCards = JSONObject.parseArray(jsonString, ReqCard.class);
             Carder.CardType cardType = this.carder.isCanPushs(pushCards);
             if (cardType == Carder.CardType.NOT_SUPPORT) {
                 JSONObject resp = new JSONObject();
@@ -388,7 +388,7 @@ public class Room {
     }
 
     //player出牌的玩家
-    public void sendPlayerPushCard(Player player, List<Card> cards){
+    public void sendPlayerPushCard(Player player, List<ReqCard> cards){
         if(player==null || cards.isEmpty()){
             return;
         }

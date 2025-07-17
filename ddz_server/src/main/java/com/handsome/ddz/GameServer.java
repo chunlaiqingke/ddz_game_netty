@@ -64,6 +64,7 @@ public class GameServer {
                 try {
                     eventHandler.handleEvent(client, req);
                 } catch (Exception e) {
+                    System.err.println(e.getMessage());
                     log.error("handle event error: ", e);
                 }
             }

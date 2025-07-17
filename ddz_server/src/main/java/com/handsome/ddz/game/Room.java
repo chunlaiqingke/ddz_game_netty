@@ -1,5 +1,6 @@
 package com.handsome.ddz.game;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.handsome.ddz.config.GameConfig;
 import com.handsome.ddz.config.RobStatus;
@@ -314,9 +315,9 @@ public class Room {
         turnchuCard();
     }
 
-    public void playerChuCard(Player player, Object data, BiConsumer<Integer,JSONObject> callback) {
+    public void playerChuCard(Player player, JSONObject req, BiConsumer<Integer,JSONObject> callback) {
         //当前没有出牌,不用走下面判断
-
+        Object data = req.get("data");
         if(Objects.equals(data, 0)){
             JSONObject resp = new JSONObject();
             JSONObject dataObj = new JSONObject();
@@ -328,10 +329,9 @@ public class Room {
             this.playerChuBuCard(null,null);
             return;
         }
-
-        if (data instanceof JSONObject) {
-            JSONObject dataObj = (JSONObject) data;
-            String jsonString = dataObj.toJSONString();
+        JSONArray dataArr = req.getJSONArray("data");
+        if (dataArr != null) {
+            String jsonString = dataArr.toString();
             List<Card> pushCards = JSONObject.parseArray(jsonString, Card.class);
             Carder.CardType cardType = this.carder.isCanPushs(pushCards);
             if (cardType == Carder.CardType.NOT_SUPPORT) {

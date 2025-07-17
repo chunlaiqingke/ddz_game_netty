@@ -103,7 +103,7 @@ public class Player {
             return;
         }
         for (ReqCard card : cards) {
-            this.cards.remove(card);
+            this.cards.remove(card.getCard_data());
         }
     }
 }

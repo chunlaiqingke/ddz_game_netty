@@ -71,14 +71,14 @@ public class Carder {
     public void initCardList() {
         for (int value : cardValue.values()) {
             for (int shape : cardShape.values()) {
-                Card card = new Card(value, shape, null);
+                Card card = new Card(value, shape, null, null);
                 card.setIndex(cardList.size());
                 cardList.add(card);
             }
         }
 
         for (Integer value : kings.values()) {
-            Card card = new Card(null, null, value);
+            Card card = new Card(value, null, value, null);
             card.setIndex(cardList.size());
             cardList.add(card);
         }
@@ -401,7 +401,15 @@ public class Carder {
         }
         CardType lastCardType = getCardType(lastPushCardList);
         CardType curCardType = getCardType(pushCardList);
-        if (curCardType != lastCardType) {
+        if (lastCardType == CardType.KING_BOOM) {
+            return false;
+        } else if (curCardType == CardType.KING_BOOM) {
+            return true;
+        } else if (lastCardType != CardType.BOOM && curCardType == CardType.BOOM) {
+            return true;
+        } else if (lastCardType == CardType.BOOM && curCardType != CardType.BOOM) {
+            return false;
+        } else if (curCardType != lastCardType) {
             return false;
         } else {
             return compare(lastPushCardList, pushCardList, lastCardType);
@@ -421,7 +429,7 @@ public class Carder {
                 result = compareThree(cardA,cardB);
                 break;
             case BOOM:
-                result = compareBoom(cardA,cardB);
+                result = compareBoom(cardA,cardB, cardType);
                 break;
             case KING_BOOM:
                 result = compareBoomKing(cardA,cardB);
@@ -458,34 +466,59 @@ public class Carder {
     }
 
     private boolean comparePlane(List<ReqCard> cardA, List<ReqCard> cardB) {
-        return false;
+        return comparePlanWithSing(cardA, cardB);
     }
 
     private boolean comparePlanWithTwo(List<ReqCard> cardA, List<ReqCard> cardB) {
-        return false;
+        return comparePlanWithSing(cardA, cardB);
     }
 
     private boolean comparePlanWithSing(List<ReqCard> cardA, List<ReqCard> cardB) {
-        return false;
+        Map<Integer, List<ReqCard>> groupA = cardA.stream().collect(Collectors.groupingBy(c -> c.getCard_data().getValue()));
+        Integer valueA = null;
+        for (Integer value : groupA.keySet()) {
+            if (groupA.get(value).size() ==3) {
+                valueA = valueA == null ? value : Math.max(value, valueA);
+            }
+        }
+        Map<Integer, List<ReqCard>> groupB = cardB.stream().collect(Collectors.groupingBy(c -> c.getCard_data().getValue()));
+        Integer valueB = null;
+        for (Integer value : groupB.keySet()) {
+            if (groupA.get(value).size() ==3) {
+                valueB = valueB == null ? value : Math.max(value, valueB);
+            }
+        }
+        return valueB > valueA;
     }
 
+    /**
+     * never show
+     * @param cardA
+     * @param cardB
+     * @return
+     */
     private boolean compareBoomKing(List<ReqCard> cardA, List<ReqCard> cardB) {
         return false;
     }
 
-    private boolean compareBoom(List<ReqCard> cardA, List<ReqCard> cardB) {
-        return false;
+    private boolean compareBoom(List<ReqCard> cardA, List<ReqCard> cardB, CardType cardTypeB) {
+        if (cardB.size() > cardA.size()) {
+            return true;
+        } else if (cardB.size() < cardA.size()) {
+            return false;
+        }
+        return cardA.get(0).getCard_data().getValue() < cardB.get(0).getCard_data().getValue();
     }
 
     private boolean compareThree(List<ReqCard> cardA, List<ReqCard> cardB) {
-        return false;
+        return cardA.get(0).getCard_data().getValue() < cardB.get(0).getCard_data().getValue();
     }
 
     private boolean compareDouble(List<ReqCard> cardA, List<ReqCard> cardB) {
-        return false;
+        return cardA.get(0).getCard_data().getValue() < cardB.get(0).getCard_data().getValue();
     }
 
     private boolean compareOne(List<ReqCard> cardA, List<ReqCard> cardB) {
-        return false;
+        return cardA.get(0).getCard_data().getValue() < cardB.get(0).getCard_data().getValue();
     }
 }

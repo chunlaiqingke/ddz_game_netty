@@ -3,6 +3,7 @@ package com.handsome.ddz.game;
 import com.alibaba.fastjson.JSONObject;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.handsome.ddz.manager.GameManager;
+import com.handsome.ddz.network.SocketHelper;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -32,15 +33,8 @@ public class Player {
         this.cards = new ArrayList<>();
     }
 
-    private void _notify(String type, int result, Object data, int callBackIndex) {
-        JSONObject payload = new JSONObject();
-        payload.put("type", type);
-        payload.put("result", result);
-        payload.put("data", data != null ? data : new JSONObject());
-        payload.put("callBackIndex", callBackIndex);
-
-        System.out.println(type + " = " + payload.toJSONString());
-        socket.sendEvent("notify", payload);
+    private void _notify(String type, Integer result, Object data, int callBackIndex) {
+        SocketHelper._notify(type, result, data, callBackIndex, socket);
     }
 
     public void sendPlayerJoinRoom(JSONObject data) {

@@ -2,8 +2,10 @@ package com.handsome.ddz.game;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class Card {
+public class Card implements Serializable {
 
     private Integer value;
 
@@ -11,11 +13,12 @@ public class Card {
 
     private Integer king;
 
-    private int index = -1;
+    private Integer index = -1;
 
-    public Card(Integer value, Integer shape, Integer king) {
+    public Card(Integer value, Integer shape, Integer king, Integer index) {
         this.value = value;
         this.shape = shape;
         this.king = king;
+        this.index = index;
     }
 }

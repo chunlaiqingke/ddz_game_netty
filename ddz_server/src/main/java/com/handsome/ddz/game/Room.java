@@ -332,6 +332,7 @@ public class Room {
         JSONArray dataArr = req.getJSONArray("data");
         if (dataArr != null) {
             String jsonString = dataArr.toString();
+            System.out.println("pushCards: " + jsonString);
             List<ReqCard> pushCards = JSONObject.parseArray(jsonString, ReqCard.class);
             Carder.CardType cardType = this.carder.isCanPushs(pushCards);
             if (cardType == Carder.CardType.NOT_SUPPORT) {
@@ -399,7 +400,7 @@ public class Room {
             JSONObject data = new JSONObject();
             data.put("accountid", player.getAccountId());
             data.put("cards", cards);
-            player.sendOtherChuCard(data);
+            p.sendOtherChuCard(data);
         }
         player.removePushCard(cards);
     }

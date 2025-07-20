@@ -429,7 +429,7 @@ public class Carder {
                 result = compareThree(cardA,cardB);
                 break;
             case BOOM:
-                result = compareBoom(cardA,cardB, cardType);
+                result = compareBoom(cardA,cardB);
                 break;
             case KING_BOOM:
                 result = compareBoomKing(cardA,cardB);
@@ -501,7 +501,7 @@ public class Carder {
         return false;
     }
 
-    private boolean compareBoom(List<ReqCard> cardA, List<ReqCard> cardB, CardType cardTypeB) {
+    private boolean compareBoom(List<ReqCard> cardA, List<ReqCard> cardB) {
         if (cardB.size() > cardA.size()) {
             return true;
         } else if (cardB.size() < cardA.size()) {

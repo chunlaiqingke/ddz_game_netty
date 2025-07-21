@@ -1,5 +1,6 @@
 package com.handsome.ddz.game;
 
+import com.alibaba.fastjson.JSONObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -50,22 +51,29 @@ public class Carder {
     @Getter
     @AllArgsConstructor
     public enum CardType{
-        ONE(1, "one"),
-        DOUBLE(1, "double"),
-        THREE(1, "three"),
-        BOOM(2, "boom"),
-        THREE_WITH_ONE(1, "threeWithOne"),
-        THREE_WITH_TWO(1, "threeWithTwo"),
-        PLANE(1, "plane"),
-        PLANE_WITH_SINGLE(1, "planeWithSingle"),
-        PLANE_WITH_TWO(1, "planeWithTwo"),
-        STRAIGHT(1, "straight"),
-        DOUBLE_SCROLL(1, "doubleScroll"),
-        KING_BOOM(3, "kingboom"),
-        NOT_SUPPORT(0, "notSupport"),
+        ONE(1, "One"),
+        DOUBLE(1, "Double"),
+        THREE(1, "Three"),
+        BOOM(2, "Boom"),
+        THREE_WITH_ONE(1, "ThreeWithOne"),
+        THREE_WITH_TWO(1, "ThreeWithTwo"),
+        PLANE(1, "Plane"),
+        PLANE_WITH_SINGLE(1, "PlaneWithSingle"),
+        PLANE_WITH_TWO(1, "PlaneWithTwo"),
+        STRAIGHT(1, "Straight"),
+        DOUBLE_SCROLL(1, "DoubleScroll"),
+        KING_BOOM(3, "Kingboom"),
+        NOT_SUPPORT(0, "NotSupport"),
         ;
         private int level;
         private String type;
+
+        public JSONObject toObject() {
+            JSONObject json = new JSONObject();
+            json.put("name", type);
+            json.put("value", level);
+            return json;
+        }
     }
 
     public void initCardList() {
@@ -458,11 +466,13 @@ public class Carder {
     }
 
     private boolean compareDoubleScroll(List<ReqCard> cardA, List<ReqCard> cardB) {
-        return false;
+        return compareScroll(cardA,cardB);
     }
 
     private boolean compareScroll(List<ReqCard> cardA, List<ReqCard> cardB) {
-        return false;
+        ReqCard maxA = cardA.stream().max(Comparator.comparingInt(c -> c.getCard_data().getValue())).get();
+        ReqCard maxB = cardB.stream().max(Comparator.comparingInt(c -> c.getCard_data().getValue())).get();
+        return maxB.getCard_data().getValue() > maxA.getCard_data().getValue();
     }
 
     private boolean comparePlane(List<ReqCard> cardA, List<ReqCard> cardB) {
@@ -477,7 +487,7 @@ public class Carder {
         Map<Integer, List<ReqCard>> groupA = cardA.stream().collect(Collectors.groupingBy(c -> c.getCard_data().getValue()));
         Integer valueA = null;
         for (Integer value : groupA.keySet()) {
-            if (groupA.get(value).size() ==3) {
+            if (groupA.get(value).size() == 3) {
                 valueA = valueA == null ? value : Math.max(value, valueA);
             }
         }

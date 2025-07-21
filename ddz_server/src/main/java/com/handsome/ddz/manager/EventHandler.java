@@ -52,10 +52,7 @@ public class EventHandler {
         Player player = GameManager.getPlayer(client.getSessionId().toString());
         Room belongRoom = GameManager.getBelongRoom(player);
         belongRoom.playerChuCard(player, req, (err, res) -> {
-            if(err != 0){
-                SocketHelper._notify("chu_card_res",err,res.get("data"),callindex, client);
-            }
-            SocketHelper._notify("chu_card_res",0,res.get("data"),callindex, client);
+            SocketHelper._notify("chu_card_res", err, res.get("data"), callindex, client);
         });
 
     }
@@ -63,7 +60,7 @@ public class EventHandler {
     private void handleChuBuCard(SocketIOClient client, JSONObject req) {
         Player player = GameManager.getPlayer(client.getSessionId().toString());
         Room belongRoom = GameManager.getBelongRoom(player);
-        belongRoom.playerChuBuCard(player, req.getInteger("data"));
+        belongRoom.playerChuBuCard(player, req.getJSONArray("data"));
     }
 
     private void handlePlayerRobMaster(SocketIOClient client, JSONObject req) {

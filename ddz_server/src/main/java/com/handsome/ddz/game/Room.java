@@ -308,7 +308,7 @@ public class Room {
         turnRob();
     }
 
-    public void playerChuBuCard(Player player, Integer data) {
+    public void playerChuBuCard(Player player, JSONArray data) {
         if(this.playingCards.isEmpty()){
             resetChuCardPlayer();
         }
@@ -353,7 +353,7 @@ public class Room {
                     JSONObject d = new JSONObject();
                     d.put("account",player.getAccountId());
                     d.put("msg","sucess");
-                    d.put("cardvalue", cardType);
+                    d.put("cardvalue", cardType.toObject());
                     resp.put("data",d);
                     callback.accept(0, resp);
                     //通知下一个玩家出牌
@@ -364,11 +364,14 @@ public class Room {
                 }
                 boolean b = carder.compareWithCard(lastPushCardList, pushCards);
                 if (b) {
+                    //出牌成功
+                    this.lastPushCardList = pushCards;
+                    this.lastPushCardAccountId = player.getAccountId();
                     JSONObject resp = new JSONObject();
                     JSONObject d = new JSONObject();
                     d.put("account",player.getAccountId());
                     d.put("msg","choose card sucess");
-                    d.put("cardvalue", cardType);
+                    d.put("cardvalue", cardType.toObject());
                     resp.put("data",d);
                     callback.accept(0, resp);
                     //通知下一个玩家出牌
@@ -380,7 +383,7 @@ public class Room {
                     JSONObject d = new JSONObject();
                     d.put("account",player.getAccountId());
                     d.put("msg","当前牌太小");
-                    d.put("cardvalue", cardType);
+                    d.put("cardvalue", cardType.toObject());
                     resp.put("data",d);
                     callback.accept(-2, resp);
                 }

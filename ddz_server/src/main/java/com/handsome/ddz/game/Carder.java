@@ -436,6 +436,12 @@ public class Carder {
             case THREE:
                 result = compareThree(cardA,cardB);
                 break;
+            case THREE_WITH_ONE:
+                result = compareThreeWithOne(cardA,cardB);
+                break;
+            case THREE_WITH_TWO:
+                result = compareThreeWithTwo(cardA,cardB);
+                break;
             case BOOM:
                 result = compareBoom(cardA,cardB);
                 break;
@@ -522,6 +528,14 @@ public class Carder {
 
     private boolean compareThree(List<ReqCard> cardA, List<ReqCard> cardB) {
         return cardA.get(0).getCard_data().getValue() < cardB.get(0).getCard_data().getValue();
+    }
+
+    private boolean compareThreeWithOne(List<ReqCard> cardA, List<ReqCard> cardB) {
+        return comparePlanWithSing(cardA, cardB);
+    }
+
+    private boolean compareThreeWithTwo(List<ReqCard> cardA, List<ReqCard> cardB) {
+        return comparePlanWithSing(cardA, cardB);
     }
 
     private boolean compareDouble(List<ReqCard> cardA, List<ReqCard> cardB) {

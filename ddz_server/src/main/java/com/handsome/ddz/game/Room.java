@@ -344,7 +344,7 @@ public class Room {
                 callback.accept(-1, resp);
                 return;
             } else {
-                if (lastPushCardList.isEmpty()) {
+                if (lastPushCardList.isEmpty() || Objects.equals(lastPushCardAccountId, player.getAccountId())) {
                     //自己牌权
                     //出牌成功
                     this.lastPushCardList = pushCards;
